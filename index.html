@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+<link rel="stylesheet" href="src/radar-chart.css">
+<script type="text/javascript" src="//d3js.org/d3.v3.js"></script>
+  <script type="text/javascript" src="src/radar-chart.js"></script>
+  <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
+<style>
+
+@font-face {
+    font-family:'Gudea';
+    src: local('Gudea'), url(http://fonts.gstatic.com/s/gudea/v4/vdqjbwDaGCKQQgMmuQ16IIDGDUGfDkXyfkzVDelzfFk.woff2) format('woff2');
+}
+
+body {
+  background: #131829;
+  padding: 2em;
+}
+
+#second-half {
+  background: #2F3A71;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  font-family: Gudea;
+  color: white;
+}
+
+h1 {
+  font-family: sans-serif;
+  font-size: 3em;
+  font-weight: bold;
+}
+
+p {
+  width: 70%;
+  font-size: 1.2em;
+}
+
+svg {
+  font: 10px sans-serif;
+}
+
+.background path {
+  fill: none;
+  stroke: none;
+  shape-rendering: crispEdges;
+}
+
+.foreground path {
+  fill: none;
+  stroke: teal;
+}
+
+.brush .extent {
+  fill-opacity: .3;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+
+.axis line,
+.axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  /*text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;*/
+  cursor: move;
+  /*stroke: white;*/
+  fill: #F4F4F4;
+  font-size: 1.25em;
+  font-family: Gudea;
+  text-align: right;
+}
+
+</style>
+<body>
+  <h1>Radar Chart</h1>
+  <p> Hover over the five schools for selection. Income, teaching, international, research, and citations
+  are clearly indicative of how highly a school is ranked. </p> 
+</br></br>
+  
+  <div class="chart-container"></div>
+  <h1> Rankings by Country </h1>
+  <p> Select and drag subset of country ranking to see how they change in relation to income, teaching, international, research, citations, and students </p>
+  </br></br>
+
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+var university = 1;
+    var teaching = 3;
+    var total_score = 8;
+    var research = 5;
+    var citations = 6;
+    var income = 7;
+    var final_data = []
+
+    function processData(allText) {
+        // console.log(allText);
+        var allTextLines = allText.split(/\r\n|\n|\r/);
+        // console.log(allTextLines.length);
+        var headers = allTextLines[0].split(',');
+        // console.log(headers);
+        // var final_data = []
+        for (var i=1; i<allTextLines.length; i++) {
+            var data = allTextLines[i].split(',');
+            // console.log(i)
+            
+            var _object = {};
+            _object.className = data[university];
+            axes_list = []
+            axes_list.push({ axis: "teaching", value: parseFloat(data[teaching]) });
+            axes_list.push({ axis: "total_score", value: parseFloat(data[total_score]) });
+            axes_list.push({ axis: "research", value: parseFloat(data[research]) });
+            axes_list.push({ axis: "citations", value: parseFloat(data[citations]) });
+            axes_list.push({ axis: "income", value: parseFloat(data[income]) });
+            _object.axes = axes_list
+            // console.log(_object)
+
+            final_data.push(_object)
+        // return final_data
+        // console.log(final_data);
+        
+        }
+        console.log(final_data)
+        RadarChart.defaultConfig.levelTick = true;
+        RadarChart.draw(".chart-container", final_data);
+    }
+    
+    $(document).ready(function() {
+      $.ajax({
+        type: "GET",
+        url: "sasha_radar.csv",
+        dataType: "text",
+        success: function(data) {processData(data);}
+      });
+    });
+
+var margin = {top: 30, right: 10, bottom: 10, left: 0},
+    width = 1060 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal().rangePoints([0, width], 1),
+    y = {},
+    dragging = {};
+
+var line = d3.svg.line(),
+    axis = d3.svg.axis().orient("left"),
+    background,
+    foreground;
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("sasha_school_rankings.csv", function(error, cars) {
+
+  // Extract the list of dimensions and create a scale for each.
+  x.domain(dimensions = d3.keys(cars[0]).filter(function(d) {
+    return d != "country" && (y[d] = d3.scale.linear()
+        .domain(d3.extent(cars, function(p) { return +p[d]; }))
+        .range([height, 0]));
+  }));
+
+  // Add grey background lines for context.
+  background = svg.append("g")
+      .attr("class", "background")
+    .selectAll("path")
+      .data(cars)
+    .enter().append("path")
+      .attr("d", path);
+
+  // Add blue foreground lines for focus.
+  foreground = svg.append("g")
+      .attr("class", "foreground")
+    .selectAll("path")
+      .data(cars)
+    .enter().append("path")
+      .attr("d", path);
+
+  // Add a group element for each dimension.
+  var g = svg.selectAll(".dimension")
+      .data(dimensions)
+    .enter().append("g")
+      .attr("class", "dimension")
+      .attr("transform", function(d) { return "translate(" + x(d) + ")"; })
+      .call(d3.behavior.drag()
+        .origin(function(d) { return {x: x(d)}; })
+        .on("dragstart", function(d) {
+          dragging[d] = x(d);
+          background.attr("visibility", "hidden");
+        })
+        .on("drag", function(d) {
+          dragging[d] = Math.min(width, Math.max(0, d3.event.x));
+          foreground.attr("d", path);
+          dimensions.sort(function(a, b) { return position(a) - position(b); });
+          x.domain(dimensions);
+          g.attr("transform", function(d) { return "translate(" + position(d) + ")"; })
+        })
+        .on("dragend", function(d) {
+          delete dragging[d];
+          transition(d3.select(this)).attr("transform", "translate(" + x(d) + ")");
+          transition(foreground).attr("d", path);
+          background
+              .attr("d", path)
+            .transition()
+              .delay(500)
+              .duration(0)
+              .attr("visibility", null);
+        }));
+
+  // Add an axis and title.
+  g.append("g")
+      .attr("class", "axis")
+      .each(function(d) { d3.select(this).call(axis.scale(y[d])); })
+    .append("text")
+      .style("text-anchor", "middle")
+      .attr("y", -9)
+      .text(function(d) { return d; });
+
+  // Add and store a brush for each axis.
+  g.append("g")
+      .attr("class", "brush")
+      .each(function(d) {
+        d3.select(this).call(y[d].brush = d3.svg.brush().y(y[d]).on("brushstart", brushstart).on("brush", brush));
+      })
+    .selectAll("rect")
+      .attr("x", -8)
+      .attr("width", 16);
+});
+
+function position(d) {
+  var v = dragging[d];
+  return v == null ? x(d) : v;
+}
+
+function transition(g) {
+  return g.transition().duration(500);
+}
+
+// Returns the path for a given data point.
+function path(d) {
+  return line(dimensions.map(function(p) { return [position(p), y[p](d[p])]; }));
+}
+
+function brushstart() {
+  d3.event.sourceEvent.stopPropagation();
+}
+
+// Handles a brush event, toggling the display of foreground lines.
+function brush() {
+  var actives = dimensions.filter(function(p) { return !y[p].brush.empty(); }),
+      extents = actives.map(function(p) { return y[p].brush.extent(); });
+  foreground.style("display", function(d) {
+    return actives.every(function(p, i) {
+      return extents[i][0] <= d[p] && d[p] <= extents[i][1];
+    }) ? null : "none";
+  });
+}
+
+</script>

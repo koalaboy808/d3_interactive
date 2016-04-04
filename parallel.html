@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+<link rel="stylesheet" href="src/radar-chart.css">
+<head>
+  <style>
+    body {
+      padding: 20px;
+    }
+    .radar-chart .area {
+      fill-opacity: 0.7;
+    }
+    .radar-chart.focus .area {
+      fill-opacity: 0.3;
+    }
+    .radar-chart.focus .area.focused {
+      fill-opacity: 0.9;
+    }
+    .area.California_Institute_of_Technology, .germany .circle {
+      fill: #FFD700;
+      stroke: none;
+    }
+    .area.argentina, .argentina .circle {
+      fill: #ADD8E6;
+      stroke: none;
+    }
+  </style>
+
+  <script type="text/javascript" src="//d3js.org/d3.v3.js"></script>
+  <script type="text/javascript" src="src/radar-chart.js"></script>
+  <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
+
+
+
+  <script type="text/javascript">
+    
+
+  </script>
+</head>
+<body>
+  <h1>Radar Chart</h1>
+    respective 
+  <div class="chart-container"></div>
+  <script type="text/javascript">
+    var university = 1;
+    var teaching = 3;
+    var total_score = 8;
+    var research = 5;
+    var citations = 6;
+    var income = 7;
+    var final_data = []
+
+    function processData(allText) {
+        // console.log(allText);
+        var allTextLines = allText.split(/\r\n|\n|\r/);
+        // console.log(allTextLines.length);
+        var headers = allTextLines[0].split(',');
+        // console.log(headers);
+        // var final_data = []
+        for (var i=1; i<allTextLines.length; i++) {
+            var data = allTextLines[i].split(',');
+            // console.log(i)
+            
+            var _object = {};
+            _object.className = data[university];
+            axes_list = []
+            axes_list.push({ axis: "teaching", value: parseFloat(data[teaching]) });
+            axes_list.push({ axis: "total_score", value: parseFloat(data[total_score]) });
+            axes_list.push({ axis: "research", value: parseFloat(data[research]) });
+            axes_list.push({ axis: "citations", value: parseFloat(data[citations]) });
+            axes_list.push({ axis: "income", value: parseFloat(data[income]) });
+            _object.axes = axes_list
+            // console.log(_object)
+
+            final_data.push(_object)
+        // return final_data
+        // console.log(final_data);
+        
+        }
+        console.log(final_data)
+        RadarChart.defaultConfig.levelTick = true;
+        RadarChart.draw(".chart-container", final_data);
+    }
+    
+    $(document).ready(function() {
+      $.ajax({
+        type: "GET",
+        url: "sasha_radar.csv",
+        dataType: "text",
+        success: function(data) {processData(data);}
+      });
+    });
+    
+  </script>
+
+
+</body>
+</html>
