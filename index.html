@@ -112,6 +112,8 @@ svg {
   <div class="chart-container"></div>
   <h1> Rankings by Country </h1>
   <p> Select and drag subset of country ranking to see how they change in relation to income, teaching, international, research, citations, and students </p>
+  
+
   <div>
     <select class-"wrapper-dropdown" id = "opts">
     <option value="sasha_school_rankings.csv">2016</option>
@@ -129,6 +131,16 @@ svg {
     var citations = 6;
     var income = 7;
     var final_data = []
+
+    // d3.select('#radar_change')
+    //   .on('change', function() {
+    //     d3.selectAll("g .axis").remove();
+    //     d3.selectAll("path").remove();
+    //     var newData = (d3.select(this).property('value'));
+    //     // console.log(typeof newData);
+    //     updateRanking(newData);
+        
+    // });
 
     function processData(allText) {
         // console.log(allText);
@@ -268,7 +280,7 @@ svg {
           .selectAll("rect")
             .attr("x", -8)
             .attr("width", 16);
-        g.exit().remove();
+        
 
       });
     }
@@ -278,7 +290,7 @@ svg {
 
     d3.select('#opts')
       .on('change', function() {
-        d3.selectAll("g text").remove();
+        d3.selectAll("g .axis").remove();
         d3.selectAll("path").remove();
         var newData = (d3.select(this).property('value'));
         // console.log(typeof newData);
