@@ -44,7 +44,7 @@ var RadarChart = {
         var coords = d3.mouse(container);
 
         tooltip.select("text").classed('visible', 1).style("fill", cfg.tooltipColor);
-        var padding=5;
+        var padding=10;
         var bbox = tooltip.select("text").text(msg).node().getBBox();
 
         tooltip.select("rect")
