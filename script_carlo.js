@@ -4,7 +4,7 @@ var w = 500,
 var colorscale = d3.scale.category10();
 
 //Legend titles
-var LegendOptions = ['California Institute of Technology','University of Wisconsin-Madison','University of Basel','University of Twente',"Queen's University Belfast"];
+var LegendOptions = ['1) California Institute of Technology','50 )University of Wisconsin-Madison','100) University of Basel','150) University of Twente',"200) Queen's University Belfast"];
 
 //Data
 var d = [
