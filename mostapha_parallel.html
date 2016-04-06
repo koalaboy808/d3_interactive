@@ -265,11 +265,11 @@ function updateRanking(newData) {
 	});
 };
 
-updateRanking("sasha_school_rankings_2016.csv");
+updateRanking("sasha_school_rankings_2015.csv");
 
 d3.select('#opts')
       .on('change', function() {
-        d3.selectAll("g .axis").remove();
+        // d3.selectAll("g .axis").remove();
         // d3.selectAll("path").remove();
         
         ////////////

@@ -112,56 +112,25 @@ p {
   width: 70%;
   font-size: 1.2em;
 }
-#body-chart {
-          overflow: hidden;
-          margin: 0;
-          font-size: 14px;
-          font-family: "Helvetica Neue", Helvetica;
-        }
-
-#chart {
-          /*position: absolute;*/
-          top: 50px;
-          left: 100px;
-        }   
 
 </style>
   
 <body>
 
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+<link rel="stylesheet" href="src/radar-chart.css">
 <link rel="stylesheet" type="text/css" href="http://mostapharoudsari.github.io/Honeybee/pc_source_files/css/d3.parcoords.css">
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src = "http://mostapharoudsari.github.io/Honeybee/pc_source_files/d3/d3.parcoords.js"></script>
-<script src="RadarChart.js"></script>
+<script type="text/javascript" src="src/radar-chart.js"></script>
 <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
   <body>
   <h1>Radar Chart</h1>
   <p> Hover over the five schools for selection. Income, teaching, international, research, and citations
   are clearly indicative of how highly a school is ranked. </p> 
-  <!--<div id="radar-buttons">
-    <button class="remove" id="0"> California Institute of Technology </button>
-    <button class="remove" id="1"> University of Wisconsin-Madison </button>
-    <button class="remove" id="2"> University of Basel </button>
-    <button class="remove" id="3"> University of Twente </button>
-    <button class="remove" id="4"> Queen's University Belfast </button>
-  </div>
-
-  <div id="removed-buttons">
-  </div>-->
-
-  <!--<div id = "rad-opts">
-
-    <input type="checkbox" name="gender" value=0> 2016
-    <input type="checkbox" name="gender" value=1> 2015
-    <input type="checkbox" name="gender" value=2> 2014
-    <input type="checkbox" name="gender" value=3> 2013
-    <input type="checkbox" name="gender" value=4> 2012
-  </div>-->
 </br></br>
   
-  <div id="body-chart">
-    <div id="chart"></div>
-  </div>
+  <div class="chart-container"></div>
   <h1> Rankings by Country </h1>
   <p> Select and drag subset of country ranking to see how they change in relation to income, teaching, international, research, citations, and students </p>
 
@@ -177,7 +146,64 @@ p {
     
 <script>
 
+var university = 1;
+    var teaching = 3;
+    var total_score = 8;
+    var research = 5;
+    var citations = 6;
+    var income = 7;
+    var final_data = []
 
+    // d3.select('#radar_change')
+    //   .on('change', function() {
+    //     d3.selectAll("g .axis").remove();
+    //     d3.selectAll("path").remove();
+    //     var newData = (d3.select(this).property('value'));
+    //     // console.log(typeof newData);
+    //     updateRanking(newData);
+        
+    // });
+
+    function processData(allText) {
+        // console.log(allText);
+        var allTextLines = allText.split(/\r\n|\n|\r/);
+        // console.log(allTextLines.length);
+        var headers = allTextLines[0].split(',');
+        // console.log(headers);
+        // var final_data = []
+        for (var i=1; i<allTextLines.length; i++) {
+            var data = allTextLines[i].split(',');
+            // console.log(i)
+            
+            var _object = {};
+            _object.className = data[university];
+            axes_list = []
+            axes_list.push({ axis: "teaching", value: parseFloat(data[teaching]) });
+            axes_list.push({ axis: "total_score", value: parseFloat(data[total_score]) });
+            axes_list.push({ axis: "research", value: parseFloat(data[research]) });
+            axes_list.push({ axis: "citations", value: parseFloat(data[citations]) });
+            axes_list.push({ axis: "income", value: parseFloat(data[income]) });
+            _object.axes = axes_list
+            // console.log(_object)
+
+            final_data.push(_object)
+        // return final_data
+        // console.log(final_data);
+        
+        }
+        console.log(final_data)
+        RadarChart.defaultConfig.levelTick = true;
+        RadarChart.draw(".chart-container", final_data);
+    }
+    
+    $(document).ready(function() {
+      $.ajax({
+        type: "GET",
+        url: "sasha_radar.csv",
+        dataType: "text",
+        success: function(data) {processData(data);}
+      });
+    });
 
 var color_set = d3.scale.linear()
   .range(["#3182bd", "#f33"]);
@@ -451,5 +477,4 @@ function highlightLineOnClick(mouseClick, drawTooltip){
 };
 
 </script>
-<script type="text/javascript" src="script.js"></script>
 </body>
