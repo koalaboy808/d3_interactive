@@ -117,12 +117,23 @@ p {
           margin: 0;
           font-size: 14px;
           font-family: "Helvetica Neue", Helvetica;
+
         }
 
 #chart {
           /*position: absolute;*/
           top: 50px;
           left: 100px;
+          width:200px;
+          
+        }   
+
+#chart-2 {
+          /*position: absolute;*/
+          top: 50px;
+          left: 100px;
+          width:200px;
+          
         }   
 
 </style>
@@ -135,9 +146,9 @@ p {
 <script src="RadarChart.js"></script>
 <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
   <body>
-  <h1>Radar Chart</h1>
+  <h1> Overview of Schools: Radar Chart</h1>
   <p> Hover over the five schools for selection. Income, teaching, international, research, and citations
-  are clearly indicative of how highly a school is ranked. </p> 
+  are clearly indicative of how highly a school in 2016 is ranked. </p> 
   <!--<div id="radar-buttons">
     <button class="remove" id="0"> California Institute of Technology </button>
     <button class="remove" id="1"> University of Wisconsin-Madison </button>
@@ -157,13 +168,36 @@ p {
     <input type="checkbox" name="gender" value=3> 2013
     <input type="checkbox" name="gender" value=4> 2012
   </div>-->
-</br></br>
-  
-  <div id="body-chart">
-    <div id="chart"></div>
+
+  <div>
+    <div id="body-chart">
+      <div id="chart"></div>
+    </div>
+    <h1> Compare Ranking of Schools </h1>
+    <p> Take a closer looked at the schools by their 2016 rank and make one-to-one comparisons</p>
+    <div "radar-dropdowns">
+      <select id="first">
+        <option selected="selected" value=0>1) California Institute of Technology</option>
+        <option value=1>50) University of Wisconsin-Madison</option>
+        <option value=2>100) University of Basel</option>
+        <option value=3>150) University of Twente</option>
+        <option value=4>200) Queen's University Belfast</option>
+      </select>
+      <select id="second">
+        <option value=0>1) California Institute of Technology</option>
+        <option value=1>50) University of Wisconsin-Madison</option>
+        <option value=2>100) University of Basel</option>
+        <option value=3>150) University of Twente</option>
+        <option selected="selected" value=4>200) Queen's University Belfast</option>
+      </select>
+    </div>
+
+    <div id="body-chart-2">
+      <div id="chart-2"></div>
+    </div>
   </div>
   <h1> Rankings by Country </h1>
-  <p> Select and drag subset of country ranking to see how they change in relation to income, teaching, international, research, citations, and students </p>
+  <p> Select and drag subset of country ranking to see how they change in relation to income, teaching, international, research, citations, and students. Click the filters to see data by year. </p>
 
   <div id = "opts">
     <input class="radio_style" type="radio" name="gender" value="sasha_school_rankings_2016.csv"> 2016
@@ -173,8 +207,8 @@ p {
     <input class="radio_style" type="radio" name="gender" value="sasha_school_rankings_2012.csv"> 2012
     <input class="radio_style" type="radio" name="gender" value="sasha_school_rankings_2011.csv"> 2011
   </div>
-  <div id="wrapper" class="parcoords" style="width:1060px; height:550px"></div>
-    
+  <div id="wrapper" class="parcoords" style="width:1060px; height:550px; margin-botton: 10em" ></div>
+  </br></br></br>
 <script>
 
 
@@ -451,5 +485,5 @@ function highlightLineOnClick(mouseClick, drawTooltip){
 };
 
 </script>
-<script type="text/javascript" src="script.js"></script>
+<script type="text/javascript" src="script_carlo.js"></script>
 </body>
