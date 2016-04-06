@@ -41,6 +41,78 @@ var d = [
           ]
         ];
 
+var d1 = [
+          [
+            {axis:"Teaching",value:95.6},
+            {axis:"Research",value:97.6},
+            {axis:"Citations",value:99.8},
+            {axis:"Income",value:97.8},
+            {axis:"Total Score",value:95.2},
+          ],[
+            {axis:"Teaching",value:65.1},
+            {axis:"Research",value:68.2},
+            {axis:"Citations",value:86.6},
+            {axis:"Income",value:48.5},
+            {axis:"Total Score",value:69.7},
+           ],[
+            {axis:"Teaching",value:39.5},
+            {axis:"Research",value:33.1},
+            {axis:"Citations",value:88.3},
+            {axis:"Income",value:99.9},
+            {axis:"Total Score",value:57.9},
+           ],[
+            {axis:"Teaching",value:34.1},
+            {axis:"Research",value:45.6},
+            {axis:"Citations",value:68.8},
+            {axis:"Income",value:91.2},
+            {axis:"Total Score",value:52.9},
+           ],[
+            {axis:"Teaching",value:34.1},
+            {axis:"Research",value:33.3},
+            {axis:"Citations",value:68.9},
+            {axis:"Income",value:35.7},
+            {axis:"Total Score",value:48.8},
+          ]
+        ];
+
+// d = [];
+// _d = []
+// first = d1[0];
+// second = d2[4];
+// _first = +($("#first").val())
+// _second = +($("#second").val())
+// d.push(first);
+// d.push(second);
+// _d.push(_first);
+// _d.push(_second);
+// console.log(typeof d)
+var initial = []
+initial.push(d[0]);
+initial.push(d[4]);
+RadarChart.draw("#chart-2", initial, mycfg);
+
+$('#first').change(function() {
+  d = []
+  var val = $(this).val();
+  var other = $("#second").val() 
+  console.log(d1[val]);
+  console.log(d1[other]);
+  d.push(d1[val]);
+  d.push(d1[other]);
+  RadarChart.draw("#chart-2", d, mycfg);
+})
+
+$('#second').change(function() {
+  d = []
+  var val = $(this).val();
+  var other = $("#first").val() 
+  console.log(d1[val]);
+  console.log(d1[other]);
+  d.push(d1[val]);
+  d.push(d1[other]);
+  RadarChart.draw("#chart-2", d, mycfg);
+})
+
 //Options for the Radar chart, other than default
 var mycfg = {
   w: w,
@@ -54,13 +126,13 @@ var mycfg = {
 //Will expect that data is in %'s
 RadarChart.draw("#chart", d, mycfg);
 
-$("#0").click(function() {
-    // alert($("#radar-buttons > button").length);
-    var _remove = $(this).html()
-    alert(_remove)
+// $("#0").click(function() {
+//     // alert($("#radar-buttons > button").length);
+//     var _remove = $(this).html()
+//     alert(_remove)
     
-    // if (this)
-});
+//     // if (this)
+// });
 
 // $("button").click(function() {
 //     // alert($("#radar-buttons > button").length);
